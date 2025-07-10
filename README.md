@@ -162,7 +162,7 @@ physeq_raw = phyloseq(ASV_phylo, TAX_phylo, META_phylo)
 physeq_raw
 
 ```
-Optional: your TREE_file can also be added in the phyloseq object
+Optional: your TREE_file can also be added to the phyloseq object
 ```
 TREE_phylo = phy_tree(TREE_file)
 physeq_raw_tree = merge_phyloseq(physeq_raw, TREE_phylo)
@@ -261,7 +261,7 @@ write.csv(contam_prev05, file.path("./1_Data_prep_results" , "Contamination_tabl
 
 We can now make a plot of the prevalence of the contaminants ASV in the controls and true samples
 
-We have to make phyloseq object of presence-absence in negative controls and true samples ...
+We have to make a phyloseq object of presence-absence in negative controls and true samples ...
   ```
 ps.pa <- transform_sample_counts(physeq_raw, function(abund) 1*(abund>0))
 ps.pa.neg <- prune_samples(sample_data(ps.pa)$Sample_or_Control == "Control", ps.pa)
@@ -281,7 +281,7 @@ plot_prevalence
  ```
 Conclusion: the contaminants are mostly prevalent in the negative controls and not in the true samples! The results are ok!
 
-We can save this plot, as a figure to confirm the quality of our decontamination
+We can save this plot as a figure to confirm the quality of our decontamination
  ```
 ggsave(filename = "Plot_prevalence.pdf", 
        plot = plot_prevalence, 
@@ -310,7 +310,7 @@ Do you confirm that the right number of contaminating ASVs has been removed?
 ntaxa(physeq_raw)
 ntaxa(physeq_decontam)
   ```
-yes, 5 ASVs were removed!
+Yes, 5 ASVs were removed!
 </details>
 
 
@@ -337,9 +337,9 @@ ntaxa(physeq_decontam) - ntaxa(physeq_filtered)
 </details>
 
 ### 2.4. Checking the rarefaction curves and removing samples with not enough reads 
-Rarefactions curves are a good representation to verify if all the diversity is covered in each sample. 
+Rarefaction curves are a good representation to verify if all the diversity is covered in each sample. 
 
-On the x-axis we have the number of reads, on the y-axis, the number of new ASVs discovered. 
+On the x-axis, we have the number of reads, on the y-axis, the number of new ASVs discovered. 
 
 If we reach a plateau, it means that no more new ASVs are identified, even if we increase or sample size (number of reads).
 
@@ -347,7 +347,7 @@ If we reach a plateau, it means that no more new ASVs are identified, even if we
 as.data.frame(t(otu_table(physeq_filtered)))
 
 rarecurve(as.data.frame(t(otu_table(physeq_filtered))), step = 20, cex = 0.5)
-#save manually the plot to ./1. Data_prep results
+# Save the plot manually to ./1. Data_prep results
   ```
 
 <details>
@@ -361,7 +361,7 @@ rarecurve(as.data.frame(t(otu_table(physeq_filtered))), step = 20, cex = 0.5)
 
 Future update soon with the package [inext](https://johnsonhsieh.github.io/iNEXT/)
 
-Based on these rarefaction curves we can now set a minimum reads threshold. 
+Based on these rarefaction curves, we can now set a minimum reads threshold. 
 
 The samples below this threshold will be excluded from our analysis, as the sequencing depth is expected to be not enough. 
 
@@ -373,18 +373,18 @@ physeq_subsampled
   ```
 With this code, we also remove the negative controls and extraction blanks. 
 
-How many samples were removed in total ? 
+How many samples were removed in total? 
 <details>
   <summary>See the answer</summary>
   
   ```
 nsamples(physeq_filtered) - nsamples(physeq_subsampled)
   ```
-3 samples in total (only the negative controls and extractions blanks, in this case)
+3 samples in total (only the negative controls and extraction blanks, in this case)
 
 </details>
 
-physeq_subsampled is your phyloseq object ready to be transformed for the alpha-diversity, beta-diversity and compositional analyses ! 
+physeq_subsampled is your phyloseq object ready to be transformed for the alpha-diversity, beta-diversity, and compositional analyses! 
 Save it as a RDS object to avoid all these steps in a future session! 
 
   ```
@@ -397,7 +397,7 @@ physeq_subsampled = readRDS("Physeq_subsampled.RDS")
 physeq_subsampled
   ```
 
-## 3. Before stating starting the analyses, let's see why the dataset should be transformed
+## 3. Before starting starting the analyses, let's see why the dataset should be transformed
 
 Rarefying your datasets means that in every sample, you will randomly remove ASVs counts until they reach the same number of ASVs of the sample with the lower size. 
 
@@ -419,24 +419,24 @@ Schloss, P.D. (2023) Waste not, want not: revisiting the analysis that called in
  
 
 <details>
-  <summary>See my opinion here on the quesion</summary>
+  <summary>See my opinion here on the question </summary>
   
 I think that the choice of the rarefaction transformation depends on the look of the rarefaction curves.
 
-If most of your samples almost reach the plateau, but not entirely, then the rarefaction is needed for the alpha-diversity analyses.
+If most of your samples almost reach the plateau, but not entirely, then rarefaction is needed for the alpha-diversity analyses.
 
-If all samples clearly showed a full plateau, it means that nothing is missing in your samples, and then nothing to worry about the difference in library size.
+If all samples clearly showed a full plateau, it means that nothing is missing in your samples, and then there is no need to worry about the difference in library size.
 
-In this rare situation, there is no need to rarefy your dataset and the alpha-diversity (especially the richness) can be plotted with the real counts from your dataset, with all the rare ASVs.
+In this rare situation, there is no need to rarefy your dataset, and the alpha-diversity (especially the richness) can be plotted with the real counts from your dataset, with all the rare ASVs.
 
-For all the rest of the analyses (beta-diversity and composition), I prefer to keep all the information and just work with normalization to the sum (i.e. transforming your counts into percentages).
+For all the rest of the analyses (beta-diversity and composition), I prefer to keep all the information and just work with normalization to the sum (i.e., transforming your counts into percentages).
 
 </details>
 
 
 ## 4. Alpha diversity analyses
 
-### 4.1. Create a phyloseq rarefied objects specifically for alpha-div analyses
+### 4.1. Create a phyloseq rarefied object specifically for alpha-div analyses
 
 As explained just before, we will rarefy our dataset, so all samples will end up with the same number of reads in total.
   ```
@@ -513,13 +513,13 @@ Pielou = data_alpha$Shannon / log(data_alpha$Observed)
 Pielou
 ```
 
-We can now add the Pielou index and the factors of interest in the data frame
+We can now add the Pielou index and the factors of interest to the data frame
 ```
 data_alpha_all = cbind(metadata_subsampled[, c("Site","Month","Site_code","Month_code")], data_alpha , Pielou)
 data_alpha_all
 ```
 
-What if I don't want to include all the samples in my analysis? (just only the site S1 for example)
+What if I don't want to include all the samples in my analysis? (just only the site S1, for example)
 
 <details>
   <summary>See the answer</summary>
@@ -534,7 +534,7 @@ data_alpha_all_subset
 
 ### 4.4. Generate a single figure for the 3 alpha-diversity indices together
 
-To have the three diversity indices (Shannon, Chao1 and Pielou) in different facets, we need to re-arrange the data.frame with a single column for all values
+To have the three diversity indices (Shannon, Chao1, and Pielou) in different facets, we need to rearrange the data.frame with a single column for all values
 
 ```
 data_long = melt(data_alpha_all, id.var=c("Site","Month","Site_code","Month_code"))
@@ -604,9 +604,9 @@ shapiro_data_alpha
 write.csv(shapiro_data_alpha, file.path("./2_Alpha_div_results" , "Shapiro_data_alpha.csv"))
 
 ```
-Based on these results, all p values are < 0.05, implying that the distribution of the data is significantly different from normal distribution. 
+Based on these results, all p-values are < 0.05, implying that the distribution of the data is significantly different from normal distribution. 
 
-In other words, we cannot assume the normality. The Kruskal-Wallis test need to be used (instead of a parametric ANOVA)
+In other words, we cannot assume normality. The Kruskal-Wallis test needs to be used (instead of a parametric ANOVA)
 
 
 ### 4.6. Test the differences of alpha-diversity according to your factors with analyses of variances
@@ -623,7 +623,7 @@ data_kruskal_Chao1_month
 data_kruskal_Pielou_month = kruskal.test(Pielou ~ Month, data_alpha_all)
 data_kruskal_Pielou_month 
 ```
-We can now create a table summarizing these information all together
+We can now create a table summarizing this information all together
 
 ```
 data_kruskal_alpha_month  <- matrix(nrow = 3 ,  ncol=3, byrow=TRUE)
