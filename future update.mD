@@ -1,4 +1,5 @@
 - update with differential analyses
+- test graphlan for vizualisation
 - update with the visualization of the data tables with the DT package (datatable function)
 - update with the ASVs plotted on the NMDS and db-RDA
 - update with the dendrogram for the beta-div
