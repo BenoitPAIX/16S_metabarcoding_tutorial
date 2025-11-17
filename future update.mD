@@ -12,6 +12,4 @@
 - add the line of script to remove the se.chao1 in the alpha-div figure
 - explain why not using phyloseq for the dbRDA plot
 - next stept after variance partionining : Multivariate regression tree (MRT) with the mvpart package see: https://r.qcbs.ca/workshop10/book-en/multivariate-regression-tree.html
-
-
-
+- mantel test correlation heatmap microbiome script : https://github.com/Hy4m/linkET !!
